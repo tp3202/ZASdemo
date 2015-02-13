@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2014 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />		
+		<script  type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>  
+<script  type="text/javascript" src="http://code.jquery.com/jquery-1.7.min.js"></script>    		
+		<script  type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.0.0.js"></script> 
+		<script  type="text/javascript" src="https://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+		<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css"></link>   
+<!-- https://dl.dropboxusercontent.com/u/32423176/cordova-1.7.0.js  -->
+		<script  type="text/javascript" src="https://dl.dropboxusercontent.com/u/32423176/cordova-1.7.0.js"></script>
+		<script  type="text/javascript" src="https://raw.githubusercontent.com/douglascrockford/JSON-js/master/json2.js"></script> 		
+		 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDV_YcPLJExJTrENaJ5j3fsvw2Nc_JfLAM&sensor=false"></script>
+ 
+        <title>Hello World</title>
+		
+    </head>
+    <body>
+        
+			
+			<div data-role="page" id="home">
+ 
+			  <div data-role="header">
+			   
+				<h1>Home</h1>
+			   
+				<div data-role="navbar">
+				  <ul>
+					<li><a href="#home" data-transition="none" data-icon="home">Home</a></li>
+					<li><a href="#startTracking" data-transition="none" data-icon="plus">Track </a></li>
+					<li><a href="#history" data-transition="none" data-icon="star">History</a></li>
+				  </ul>
+				</div>
+			  </div>
+			  <script>
+			 document.addEventListener("deviceready", function(){
+   
+				  if(navigator.network.connection.type == Connection.NONE){
+					$("#home_network_button").text('No Internet Access')
+								 .attr("data-icon", "delete")
+								 .button('refresh');
+				  }
+				 
+				});
+				
+				$("#home_clearstorage_button").live('click', function(){
+					window.localStorage.clear();
+				});
+				 
+				$("#home_seedgps_button").live('click', function(){
+					window.localStorage.setItem('Sample block', '[{"timestamp":1335700802000,"coords":{"heading":null,"altitude":null,"longitude":170.33488333333335,"accuracy":0,"latitude":-45.87475166666666,"speed":null,"altitudeAccuracy":null}},{"timestamp":1335700803000,"coords":{"heading":null,"altitude":null,"longitude":170.33481666666665,"accuracy":0,"latitude":-45.87465,"speed":null,"altitudeAccuracy":null}},{"timestamp":1335700804000,"coords":{"heading":null,"altitude":null,"longitude":170.33426999999998,"accuracy":0,"latitude":-45.873708333333326,"speed":null,"altitudeAccuracy":null}},{"timestamp":1335700805000,"coords":{"heading":null,"altitude":null,"longitude":170.33318333333335,"accuracy":0,"latitude":-45.87178333333333,"speed":null,"altitudeAccuracy":null}},{"timestamp":1335700806000,"coords":{"heading":null,"altitude":null,"longitude":170.33416166666666,"accuracy":0,"latitude":-45.871478333333336,"speed":null,"altitudeAccuracy":null}},{"timestamp":1335700807000,"coords":{"heading":null,"altitude":null,"longitude":170.33526833333332,"accuracy":0,"latitude":-45.873394999999995,"speed":null,"altitudeAccuracy":null}},{"timestamp":1335700808000,"coords":{"heading":null,"altitude":null,"longitude":170.33427333333336,"accuracy":0,"latitude":-45.873711666666665,"speed":null,"altitudeAccuracy":null}},{"timestamp":1335700809000,"coords":{"heading":null,"altitude":null,"longitude":170.33488333333335,"accuracy":0,"latitude":-45.87475166666666,"speed":null,"altitudeAccuracy":null}}]');
+				 
+				});
+				</script>
+			  <div data-role="content">
+				<p>GPS TEST</p>
+				<button id="home_network_button" data-icon="check">Internet Access Enabled</button>
+				<button id="home_clearstorage_button">Clear local storage</button>
+				<button id="home_seedgps_button">Load Seed GPS Data</button>
+			  </div>
+			 
+			 
+			</div>
+     
+	 <div data-role="page" id="startTracking">
+ 
+		  <div data-role="header">
+			<h1>Track</h1>
+			 
+	 <script>
+					 var track_id = '';      // Name/ID of the exercise
+				var watch_id = null;    // ID of the geolocation
+				var tracking_data = []; // Array containing GPS position objects
+				
+				$("#startTracking_start").live('click', function(){
+					  alert();
+					// Start tracking the User
+					watch_id = navigator.geolocation.getCurrentPosition(
+					 
+						// Success
+						function(position){
+							tracking_data.push(position);
+						},
+						 
+						// Error
+						function(error){
+							console.log(error);
+						},
+						 
+						// Settings
+						{ frequency: 3000, enableHighAccuracy: true });
+					 
+					// Tidy up the UI
+					track_id = $("#track_id").val();
+					 
+					$("#track_id").hide();
+					 
+					$("#startTracking_status").html("Tracking : <strong>" + track_id + "</strong>");
+				});
+				
+				$("#startTracking_stop").live('click', function(){
+   
+				  // Stop tracking the user
+				  navigator.geolocation.clearWatch(watch_id);
+				   
+				  // Save the tracking data
+				  window.localStorage.setItem(track_id, JSON.stringify(tracking_data));
+				 
+				  // Reset watch_id and tracking_data 
+				  var watch_id = null;
+				  var tracking_data = null;
+				 
+				  // Tidy up the UI
+				  $("#track_id").val("").show();
+				   
+				  $("#startTracking_status").html("Stopped tracking: <strong>" + track_id + "</strong>");
+				 
+				});
+	 </script>
+	 
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#home" data-transition="none" data-icon="home">Home</a></li>
+        <li><a href="#startTracking" data-transition="none" data-icon="plus">Track </a></li>
+        <li><a href="#history" data-transition="none" data-icon="star">History</a></li>
+      </ul>
+    </div>
+  </div>
+ 
+  <div data-role="content"> 
+    <p id="startTracking_status"></p>
+      <div data-role="fieldcontain" class="ui-hide-label">
+        <label for="track_id">Track ID/Name:</label>
+        <input type="text" name="track_id" id="track_id" placeholder="Test ID/Name"/>
+      </div>
+ 
+    <button data-role="button" id="startTracking_start">Start Tracking</button>
+    <button data-role="button" id="startTracking_stop">Stop Tracking</button>  
+     
+        <p id="startTracking_debug"></p>
+         
+  </div>
+ 
+ 
+</div>
+	 
+	 
+	 <div data-role="page" id="history">
+	 
+	 
+	 
+ 
+    <div data-role="header">
+        <h1>History</h1>
+         <script>
+		 // When the user views the history page
+			$('#history').live('pageshow', function () {
+			   
+			  // Count the number of entries in localStorage and display this information to the user
+			  tracks_recorded = window.localStorage.length;
+			  $("#tracks_recorded").html("<strong>" + tracks_recorded + "</strong> test(s) recorded");
+			   
+			  // Empty the list of recorded tracks
+			  $("#history_tracklist").empty();
+			   
+			  // Iterate over all of the recorded tracks, populating the list
+			  for(i=0; i<tracks_recorded; i++){
+				$("#history_tracklist").append("<li><a href='#track_info' data-ajax='false'>" + window.localStorage.key(i) + "</a></li>");
+			  }
+			   
+			  // Tell jQueryMobile to refresh the list
+			  $("#history_tracklist").listview('refresh');
+			 
+			});
+		 </script>
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#home" data-transition="none" data-icon="home">Home</a></li>
+                <li><a href="#startTracking" data-transition="none" data-icon="plus">Track </a></li>
+                <li><a href="#history" data-transition="none" data-icon="star">History</a></li>
+            </ul>
+        </div>
+    </div>
+ 
+    <div data-role="content"> 
+        <p id="tracks_recorded"></p>
+         
+        <ul data-role="listview" id="history_tracklist">
+ 
+        </ul>
+    </div>
+ 
+ 
+</div>
+       
+<div data-role="page" id="track_info">
+ 
+  <div data-role="header">
+    <h1>Viewing Single Workout</h1>
+     <script>
+			 $("#history_tracklist li a").live('click', function(){
+		 
+		  $("#track_info").attr("track_id", $(this).text());
+		   
+		});
+		 
+		// When the user views the Track Info page
+		$('#track_info').live('pageshow', function(){
+		 
+		  // Find the track_id of the workout they are viewing
+		  var key = $(this).attr("track_id");
+		   
+		  // Update the Track Info page header to the track_id
+		  $("#track_info div[data-role=header] h1").text(key);
+		   
+		  // Get all the GPS data for the specific workout
+		  var data = window.localStorage.getItem(key);
+		   
+		  // Turn the stringified GPS data back into a JS object
+		  data = JSON.parse(data);
+		  
+  </script>
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#home" data-transition="none" data-icon="home">Home</a></li>
+        <li><a href="#startTracking" data-transition="none" data-icon="plus">Track Workout</a></li>
+        <li><a href="#history" data-transition="none" data-icon="star">History</a></li>
+      </ul>
+    </div>
+  </div>
+ 
+  <div data-role="content"> 
+    <p id="track_info_info"></p>
+     
+    <div id="map_canvas" style="position:absolute;bottom:0;left:0;width:100%;height:300px;"></div>
+     
+  </div>
+ 
+ 
+</div>
+
+
+	   <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+    </body>
+</html>
